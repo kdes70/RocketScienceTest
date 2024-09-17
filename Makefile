@@ -4,15 +4,16 @@ SHELL = /bin/sh
 
 export PWD := $(PWD)
 
-ifneq (,$(wildcard ./api/.env))
-    include ./api/.env
+ifneq (,$(wildcard ./.env))
+    include ./.env
     export
 endif
 
-API_DIR := $(PWD)/
+API_DIR := /
 
-sail_bin := $(shell command -v $(API_DIR)/vendor/bin/sail 2> /dev/null)
+sail_bin := $(shell command -v $(API_DIR)vendor/bin/sail 2> /dev/null)
 docker_bin := $(shell command -v docker 2> /dev/null)
+code_fix := $(shell command -v  $(API_DIR)vendor/bin/pint  2> /dev/null)
 
 # The "new" version integrates compose in the docker command.
 COMPOSE_COMMAND=docker compose
@@ -32,11 +33,10 @@ APP_CONTAINER_NAME := $(APP_SERVICE)
 install: down x-perm x-copy-env ## build and install application
 	$(sail_bin) build --no-cache
 	make up
+	make x-perm
 	make x-key-generate
-	make x-database
-	make x-ide
 
-init: up x-perm x-clear-generated x-composer-install x-database x-ide ## start application, refresh configs and helpers
+init: up x-clear-generated x-clear-cache x-composer-install x-database x-ide ## start application, refresh configs and helpers
 
 up: ## start application containers
 	$(sail_bin) up -d
@@ -58,6 +58,10 @@ php-cli: up ## start shell of laravel tinker
 
 redis-cli: up ## start shell of redis
 	$(COMPOSE_COMMAND) exec $(REDIS_CONTAINER_NAME) sh -c redis-cli
+
+review:
+	$(COMPOSE_COMMAND) exec $(APP_CONTAINER_NAME) sh -c "/var/www/html/vendor/bin/pint"
+
 
 # DATABASE
 x-database: ## recreating database with all migrations and seeds
@@ -87,8 +91,8 @@ x-clear-generated:
 	test -f $(API_DIR)/.phpunit.result.cache && rm $(API_DIR)/.phpunit.result.cache || true
 	test -d $(API_DIR)/storage/logs && find $(API_DIR)/storage/logs -name '*.log' -exec rm {} \;
 
-x-composer-install:
-	$(sail_bin) composer install
+x-clear-cache:
+	$(sail_bin) artisan cache:clear
 
 x-perm:
 	sudo chown ${USER}:${USER} $(API_DIR)/storage -R
@@ -97,4 +101,9 @@ x-perm:
 
 x-test:
 	$(sail_bin) test --env=testing --testsuite=Feature --stop-on-failure
+
+# COMPOSER
+x-composer-install:
+	$(sail_bin) composer install
+
 

@@ -2,7 +2,6 @@
 
 namespace App\Services\Filters;
 
-
 use Illuminate\Database\Eloquent\Builder;
 
 class ProductFilter extends AbstractFilter
