@@ -1,14 +1,14 @@
 # Проект тестового задания REST API сервис для "каталога товаров"
 
-![Rocket Science](./Тестовое%20задание.md)
+[Rocket Science](./Тестовое%20задание.md)
 
 ## Installation
 
 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/chat-app.git
-cd chat-app
+git clone https://github.com/kdes70/RocketScienceTest/
+cd RocketScienceTest
 ```
 
 ### Настройка на Linux
