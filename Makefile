@@ -9,7 +9,7 @@ ifneq (,$(wildcard ./.env))
     export
 endif
 
-API_DIR := /
+API_DIR := $(PWD)/
 
 sail_bin := $(shell command -v $(API_DIR)vendor/bin/sail 2> /dev/null)
 docker_bin := $(shell command -v docker 2> /dev/null)
@@ -85,19 +85,19 @@ x-ide:
 	$(sail_bin) artisan ide-helper:models -N --write-mixin --no-interaction # --write-mixin --no-interaction fix multiple definitions exist for classes in Laravel Ide
 
 x-clear-generated:
-	test -f $(API_DIR)/.phpstorm.meta.php && rm $(API_DIR)/.phpstorm.meta.php || true
-	test -f $(API_DIR)/_ide_helper.php && rm $(API_DIR)/_ide_helper.php || true
-	test -f $(API_DIR)/_ide_helper_models.php && rm $(API_DIR)/_ide_helper_models.php || true
-	test -f $(API_DIR)/.phpunit.result.cache && rm $(API_DIR)/.phpunit.result.cache || true
-	test -d $(API_DIR)/storage/logs && find $(API_DIR)/storage/logs -name '*.log' -exec rm {} \;
+	test -f $(API_DIR).phpstorm.meta.php && rm $(API_DIR).phpstorm.meta.php || true
+	test -f $(API_DIR)_ide_helper.php && rm $(API_DIR)_ide_helper.php || true
+	test -f $(API_DIR)_ide_helper_models.php && rm $(API_DIR)_ide_helper_models.php || true
+	test -f $(API_DIR).phpunit.result.cache && rm $(API_DIR).phpunit.result.cache || true
+	test -d $(API_DIR)storage/logs && find $(API_DIR)storage/logs -name '*.log' -exec rm {} \;
 
 x-clear-cache:
 	$(sail_bin) artisan cache:clear
 
 x-perm:
-	sudo chown ${USER}:${USER} $(API_DIR)/storage -R
-	sudo chgrp -R www-data $(API_DIR)/storage
-	sudo chmod -R ug+rwx $(API_DIR)/storage
+	sudo chown ${USER}:${USER} $(API_DIR)storage -R
+	sudo chgrp -R www-data $(API_DIR)storage
+	sudo chmod -R ug+rwx $(API_DIR)storage
 
 x-test:
 	$(sail_bin) test --env=testing --testsuite=Feature --stop-on-failure

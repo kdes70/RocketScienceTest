@@ -15,12 +15,6 @@ class Product extends Model implements Filterable
 
     protected $fillable = ['name', 'price', 'quantity'];
 
-    public function properties(): BelongsToMany
-    {
-        return $this->belongsToMany(Property::class, 'product_property_values')
-            ->withPivot('value_id');
-    }
-
     public function propertyValues(): BelongsToMany
     {
         return $this->belongsToMany(PropertyValue::class, 'product_property_values');
